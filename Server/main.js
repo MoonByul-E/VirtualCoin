@@ -21,7 +21,97 @@ loginServer.on("connection", function(socket, req){
         
         //로그인 요청
         if(messageJson.command == "login"){
+            const id = messageJson.id;
+            const pw = messageJson.pw;
 
+            //데이터베이스에서 아이디 목록 불러오기
+            const idList = mysqlDB.query("SELECT ID FROM loginData");
+
+            var idOverlap = false;
+
+            //아이디 중복 체크
+            for(var i = 0; i < idList.length; i ++){
+                if(idList[i].ID == id) idOverlap = true;
+            }
+
+            //이미 사용중인 아이디
+            if(idOverlap){
+                //아이디의 비밀번호 정보 불러오기
+                const pwData = mysqlDB.query('SELECT PW_Key, PW_Salt FROM loginData WHERE ID="' + id + '"');
+                const pwCrypto = crypto.pbkdf2Sync(pw, pwData[0].PW_Salt, 110800, 64, "sha512").toString("base64");
+
+                //비밀번호 일치시
+                if(pwData[0].PW_Key == pwCrypto){
+                    //중복 로그인 체크
+                    const nowLogin = mysqlDB.query('SELECT nowLogin FROM loginData WHERE ID="' + id + '"')[0].nowLogin == "true" ? true : false;
+                    
+                    //중복 로그인시
+                    if(nowLogin){
+                        const sendJson = {
+                            "command": "login",
+                            "result": "nowLogin"
+                        }
+                        socket.send(JSON.stringify(sendJson));
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("중복 로그인"), "]", "했습니다.");
+                    }
+                    //로그인 성공
+                    else{
+                        mysqlDB.query('UPDATE loginData SET nowLogin="true" WHERE ID="'+ id + '"');
+                        const sendJson = {
+                            "command": "login",
+                            "result": "success"
+                        }
+                        socket.send(JSON.stringify(sendJson));
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                    }
+                }
+                //비밀번호가 일치하지 않을시
+                else{
+                    const sendJson = {
+                        "command": "login",
+                        "result": "pwError"
+                    }
+                    socket.send(JSON.stringify(sendJson));
+                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("비밀번호 오류"), "]", "했습니다.");
+                }
+            }
+            //사용자가 없는 아이디
+            else{
+                const sendJson = {
+                    "command": "login",
+                    "result": "idError"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("아이디 오류"), "]", "했습니다.");
+            }
+        }
+
+        //로그아웃 요청
+        else if(messageJson.command == "logout"){
+            const id = messageJson.id;
+
+            //로그인 상태 체크
+            const nowLogin = mysqlDB.query('SELECT nowLogin FROM loginData WHERE ID="' + id + '"')[0].nowLogin == "true" ? true : false;
+
+            //로그인 중일때
+            if(nowLogin){
+                mysqlDB.query('UPDATE loginData SET nowLogin="false" WHERE ID="'+ id + '"');
+                const sendJson = {
+                    "command": "logout",
+                    "result": "success"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+            }
+            //로그인중이 아닐때
+            else{
+                const sendJson = {
+                    "command": "logout",
+                    "result": "notLogin"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
+            }
         }
 
         //회원가입 요청
