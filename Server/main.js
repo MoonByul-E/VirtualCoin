@@ -24,7 +24,10 @@ loginServer.on("connection", function(socket, req){
 
         //회원가입 요청
         else if(messageJson.command == "register"){
+            const id = messageJson.id;
+            const pw = messageJson.pw;
 
+            
         }
 
         //아이디 찾기 요청
