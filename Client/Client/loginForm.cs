@@ -18,6 +18,7 @@ namespace Client
         WebSocket loginServer = new WebSocket(url: "ws://127.0.0.1:7777");
         idSearchForm idSearchForm;
         pwSearchForm pwSearchForm;
+        registerForm registerForm;
 
         public loginForm()
         {
@@ -53,7 +54,32 @@ namespace Client
                 //로그인 데이터 받음
                 else if(revData["command"].ToString() == "login")
                 {
-                    Console.WriteLine(revData);
+                    if(revData["result"].ToString() == "success")
+                    {
+                        mainForm mainForm = new mainForm();
+                        mainForm.get_Token = revData["token"].ToString();
+                        this.Hide();
+                        mainForm.ShowDialog();
+                        this.Close();
+                    }
+                    //비밀번호 오류
+                    else if(revData["result"].ToString() == "pwError")
+                    {
+                        showAlter("로그인", "비밀번호가 일치하지 않습니다.");
+                        tb_PW.Focus();
+                    }
+                    //이미 접속중
+                    else if (revData["result"].ToString() == "nowLogin")
+                    {
+                        showAlter("로그인", "이미 접속중인 아이디 입니다.");
+                        tb_PW.Focus();
+                    }
+                    //아이디 오류
+                    else
+                    {
+                        showAlter("로그인", "존재하지 않는 아이디 입니다.");
+                        tb_ID.Focus();
+                    }
                 }
                 //아이디 찾기 데이터 받음
                 else if (revData["command"].ToString() == "idSearch")
@@ -83,6 +109,23 @@ namespace Client
                     else
                     {
                         showAlter("비밀번호 찾기", "입력하신 정보가 올바르지 않습니다.");
+                    }
+                }
+                //회원가입 데이터 받음
+                else if(revData["command"].ToString() == "register")
+                {
+                    if(revData["result"].ToString() == "success")
+                    {
+                        showAlter("회원가입", "회원가입을 성공적으로 완료했습니다.");
+                        registerForm.Close();
+                    }
+                    else if(revData["result"].ToString() == "idOverlap")
+                    {
+                        showAlter("회원가입", "이미 사용중인 아이디 입니다.");
+                    }
+                    else if (revData["result"].ToString() == "emailOverlap")
+                    {
+                        showAlter("회원가입", "이미 사용중인 이메일 입니다.");
                     }
                 }
             };
@@ -149,6 +192,13 @@ namespace Client
             pwSearchForm = new pwSearchForm();
             pwSearchForm.get_loginServer = loginServer;
             pwSearchForm.ShowDialog();
+        }
+
+        private void btn_Register_Click(object sender, EventArgs e)
+        {
+            registerForm = new registerForm();
+            registerForm.get_loginServer = loginServer;
+            registerForm.ShowDialog();
         }
     }
 }

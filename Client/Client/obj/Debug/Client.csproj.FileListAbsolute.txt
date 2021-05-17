@@ -19,3 +19,5 @@ C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\bin\Debug\websocket-shar
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.AlterForm.resources
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.idSearchForm.resources
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.pwSearchForm.resources
+C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.registerForm.resources
+C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.mainForm.resources

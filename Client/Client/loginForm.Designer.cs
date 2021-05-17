@@ -167,6 +167,7 @@ namespace Client
             this.btn_Register.TabIndex = 5;
             this.btn_Register.Text = "회원가입";
             this.btn_Register.UseSelectable = true;
+            this.btn_Register.Click += new System.EventHandler(this.btn_Register_Click);
             // 
             // btn_IDSearch
             // 

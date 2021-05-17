@@ -67,7 +67,6 @@ namespace Client
             this.MinimizeBox = false;
             this.Name = "AlterForm";
             this.Resizable = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "오류!";
             this.Load += new System.EventHandler(this.AlterForm_Load);
             this.ResumeLayout(false);
