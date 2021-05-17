@@ -55,9 +55,12 @@ function onOpen(evt) {
         "id": "ver1108",
         "pw": "asd1230"
     }
+    var json_ChangeLog = {
+        "command": "changeLog"
+    }
 
     writeToScreen("CONNECTED");
-    doSend(JSON.stringify(json_Logout));
+    doSend(JSON.stringify(json_ChangeLog));
 }
 
 function onClose(evt) {

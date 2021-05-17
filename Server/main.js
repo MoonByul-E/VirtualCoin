@@ -1,6 +1,7 @@
 const WebSocket = require("ws");
 const Chalk = require("chalk");
 const crypto = require("crypto");
+const fs = require("fs");
 const mysqlDB = require("./Mysql.js");
 
 const loginServer = new WebSocket.Server({host: "127.0.0.1", port: 7777});
@@ -332,7 +333,32 @@ loginServer.on("connection", function(socket, req){
                 console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("비밀번호 변경")), "[아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("비밀번호 변경 설정 오류"), "]", "했습니다.");
             }
         }
-    })
+
+        //최신 버전 확인
+        else if(messageJson.command == "version"){
+            const nowVersion = "1.0.0";
+
+            const sendJson = {
+                "command": "version",
+                "version": nowVersion
+            }
+            socket.send(JSON.stringify(sendJson));
+            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("현재 버전 요청")), "에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+
+        }
+
+        //체인지로그 요청
+        else if(messageJson.command == "changeLog"){
+            const changeLogFile = fs.readFileSync("./ChangeLog.txt").toString();
+
+            const sendJson = {
+                "command": "changeLog",
+                "changeLog": changeLogFile
+            }
+            socket.send(JSON.stringify(sendJson));
+            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("체인지 로그 요청")), "에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+        }
+    });
 });
 
 //메인 서버 사용자 접속
