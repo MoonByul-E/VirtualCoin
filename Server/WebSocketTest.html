@@ -31,7 +31,7 @@ function onOpen(evt) {
     var json_Login = {
         "command": "login",
         "id": "ver1108",
-        "pw": "asd1230"
+        "pw": "psh11080"
     };
     var json_Logout = {
         "command": "logout",
@@ -43,9 +43,21 @@ function onOpen(evt) {
         "email_ID": "asd",
         "email_Domain": "asd"
     };
+    var json_PWSearch = {
+        "command": "pwSearch",
+        "id": "ver1108",
+        "name": "박세현",
+        "email_ID": "navylimes",
+        "email_Domain": "gmail.com"
+    };
+    var json_PWChange = {
+        "command": "pwChange",
+        "id": "ver1108",
+        "pw": "asd1230"
+    }
 
     writeToScreen("CONNECTED");
-    doSend(JSON.stringify(json_IDSearch));
+    doSend(JSON.stringify(json_PWChange));
 }
 
 function onClose(evt) {
