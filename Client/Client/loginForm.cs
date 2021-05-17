@@ -16,6 +16,8 @@ namespace Client
     {
         string nowVersion = "1.0.0";
         WebSocket loginServer = new WebSocket(url: "ws://127.0.0.1:7777");
+        idSearchForm idSearchForm;
+        pwSearchForm pwSearchForm;
 
         public loginForm()
         {
@@ -24,6 +26,7 @@ namespace Client
             loginServer.OnMessage += (sender, e) =>
             {
                 JObject revData = JObject.Parse(e.Data);
+                //Console.WriteLine(revData);
 
                 //최신 버전 정보 데이터 받음
                 if(revData["command"].ToString() == "version")
@@ -51,6 +54,36 @@ namespace Client
                 else if(revData["command"].ToString() == "login")
                 {
                     Console.WriteLine(revData);
+                }
+                //아이디 찾기 데이터 받음
+                else if (revData["command"].ToString() == "idSearch")
+                {
+                    //아이디 찾기 성공
+                    if(revData["result"].ToString() == "success")
+                    {
+                        showAlter("아이디 찾기", "아이디: " + revData["id"].ToString());
+                        idSearchForm.Close();
+                    }
+                    //아이디 찾기 실패
+                    else
+                    {
+                        showAlter("아이디 찾기", "입력하신 정보가 올바르지 않습니다.");
+                    }
+                }
+                //비밀번호 찾기 데이터 받음
+                else if(revData["command"].ToString() == "pwSearch")
+                {
+                    //비밀번호 찾기 성공
+                    if(revData["result"].ToString() == "success")
+                    {
+                        showAlter("비밀번호 변경", "비밀번호가 성공적으로 변경 되었습니다.");
+                        pwSearchForm.Close();
+                    }
+                    //비밀번호 찾기 실패
+                    else
+                    {
+                        showAlter("비밀번호 찾기", "입력하신 정보가 올바르지 않습니다.");
+                    }
                 }
             };
         }
@@ -106,7 +139,16 @@ namespace Client
 
         private void btn_IDSearch_Click(object sender, EventArgs e)
         {
+            idSearchForm = new idSearchForm();
+            idSearchForm.get_loginServer = loginServer;
+            idSearchForm.ShowDialog();
+        }
 
+        private void btn_PWSearch_Click(object sender, EventArgs e)
+        {
+            pwSearchForm = new pwSearchForm();
+            pwSearchForm.get_loginServer = loginServer;
+            pwSearchForm.ShowDialog();
         }
     }
 }

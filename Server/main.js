@@ -255,6 +255,7 @@ loginServer.on("connection", function(socket, req){
         //비밀번호 찾기 요청
         else if(messageJson.command == "pwSearch"){
             const id = messageJson.id;
+            const pw = messageJson.pw;
             const name = messageJson.name;
             const email_ID = messageJson.email_ID;
             const email_Domain = messageJson.email_Domain;
@@ -266,13 +267,30 @@ loginServer.on("connection", function(socket, req){
             if(name == loginList[0].Name){
                 //이메일이 같으면
                 if(email_ID + "@" + email_Domain == loginList[0].EMail_ID + "@" + loginList[0].EMail_Domain){
-                    mysqlDB.query('UPDATE loginData SET changePW="true" WHERE ID="'+ id + '"');
+                    /*mysqlDB.query('UPDATE loginData SET changePW="true" WHERE ID="'+ id + '"');
                     const sendJson = {
                         "command": "pwSearch",
-                        "result": "success"
+                        "result": "success",
+                        "id": id
                     }
-                    socket.send(JSON.stringify(sendJson));
-                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("비밀번호 찾기")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                    socket.send(JSON.stringify(sendJson));*/
+
+                    crypto.randomBytes(64, function(err, buffer){
+                        crypto.pbkdf2(pw, buffer.toString("base64"), 110800, 64, "sha512", function(err, key){
+                            const PW_Key = key.toString("base64");
+                            const PW_Salt = buffer.toString("base64");
+    
+                            //데이터베이스에 업데이트
+                            mysqlDB.query('UPDATE loginData SET PW_Key="' + PW_Key + '", PW_Salt="' + PW_Salt + '", changePW="false" WHERE ID="' + id + '"');
+    
+                            const sendJson = {
+                                "command": "pwSearch",
+                                "result": "success"
+                            }
+                            socket.send(JSON.stringify(sendJson));
+                            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("비밀번호 변경")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                        });
+                    });
                 }
                 //이메일이 다르면
                 else{

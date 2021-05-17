@@ -157,6 +157,7 @@ namespace Client
             this.btn_PWSearch.TabIndex = 4;
             this.btn_PWSearch.Text = "비밀번호 찾기";
             this.btn_PWSearch.UseSelectable = true;
+            this.btn_PWSearch.Click += new System.EventHandler(this.btn_PWSearch_Click);
             // 
             // btn_Register
             // 
