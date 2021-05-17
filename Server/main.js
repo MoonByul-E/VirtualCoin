@@ -52,7 +52,7 @@ loginServer.on("connection", function(socket, req){
                             "result": "nowLogin"
                         }
                         socket.send(JSON.stringify(sendJson));
-                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("중복 로그인"), "]", "했습니다.");
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("중복 로그인"), "]", "했습니다.");
                     }
                     //로그인 성공
                     else{
@@ -62,7 +62,7 @@ loginServer.on("connection", function(socket, req){
                             "result": "success"
                         }
                         socket.send(JSON.stringify(sendJson));
-                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
                     }
                 }
                 //비밀번호가 일치하지 않을시
@@ -72,7 +72,7 @@ loginServer.on("connection", function(socket, req){
                         "result": "pwError"
                     }
                     socket.send(JSON.stringify(sendJson));
-                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("비밀번호 오류"), "]", "했습니다.");
+                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("비밀번호 오류"), "]", "했습니다.");
                 }
             }
             //사용자가 없는 아이디
@@ -82,7 +82,7 @@ loginServer.on("connection", function(socket, req){
                     "result": "idError"
                 }
                 socket.send(JSON.stringify(sendJson));
-                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("아이디 오류"), "]", "했습니다.");
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "[", Chalk.cyanBright("아이디 오류"), "]", "했습니다.");
             }
         }
 
@@ -101,7 +101,7 @@ loginServer.on("connection", function(socket, req){
                     "result": "success"
                 }
                 socket.send(JSON.stringify(sendJson));
-                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
             }
             //로그인중이 아닐때
             else{
@@ -110,7 +110,7 @@ loginServer.on("connection", function(socket, req){
                     "result": "notLogin"
                 }
                 socket.send(JSON.stringify(sendJson));
-                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
             }
         }
 
@@ -139,7 +139,7 @@ loginServer.on("connection", function(socket, req){
                     "result": "idOverlap"
                 }
                 socket.send(JSON.stringify(sendJson));
-                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
             }
             //사용자가 없는 아이디
             else{
@@ -162,7 +162,7 @@ loginServer.on("connection", function(socket, req){
                         "result": "emailOverlap"
                     }
                     socket.send(JSON.stringify(sendJson));
-                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[", Chalk.cyanBright(email_ID + "@" + email_Domain), "]","에", Chalk.bgRed("실패"), "했습니다.");
+                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[ 이메일: ", Chalk.cyanBright(email_ID + "@" + email_Domain), "]","에", Chalk.bgRed("실패"), "했습니다.");
                 }
                 //사용자가 없는 이메일
                 else{
@@ -180,7 +180,7 @@ loginServer.on("connection", function(socket, req){
                                 "result": "success"
                             }
                             socket.send(JSON.stringify(sendJson));
-                            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("회원가입")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
                         });
                     });
                 }
@@ -189,7 +189,60 @@ loginServer.on("connection", function(socket, req){
 
         //아이디 찾기 요청
         else if(messageJson.command == "idSearch"){
+            const name = messageJson.name;
+            const email_ID = messageJson.email_ID;
+            const email_Domain = messageJson.email_Domain;
 
+            //데이터베이스에서 이메일 아이디 목록 불러오기
+            const email_IDList = mysqlDB.query('SELECT ID, Name, EMail_Domain FROM loginData WHERE EMail_ID="' + email_ID + '"');
+
+            var result = false;
+
+            for(var i = 0; i < email_IDList.length; i ++){
+                //이름이 같으면
+                if(name == email_IDList[i].Name){
+                    //이메일 도메인이 같으면
+                    if(email_Domain == email_IDList[i].EMail_Domain){
+                        const sendJson = {
+                            "command": "idSearch",
+                            "result": "success",
+                            "id": email_IDList[i].ID
+                        }
+                        socket.send(JSON.stringify(sendJson));
+                        result = true;
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("아이디 찾기")), "[ 아이디: ", Chalk.cyanBright(email_IDList[i].ID), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                    }
+                    //이메일 도메인이 다르면
+                    else{
+                        const sendJson = {
+                            "command": "idSearch",
+                            "result": "emailDomainError"
+                        }
+                        socket.send(JSON.stringify(sendJson));
+                        result = true;
+                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("아이디 찾기")), "[ 이름: ", Chalk.cyanBright(name), "]","에", Chalk.bgRed("실패"), "했습니다.");
+                    }
+                }
+                //이름이 다르면
+                else{
+                    const sendJson = {
+                        "command": "idSearch",
+                        "result": "nameError"
+                    }
+                    socket.send(JSON.stringify(sendJson));
+                    result = true;
+                    console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("아이디 찾기")), "[이메일 아이디: ", Chalk.cyanBright(email_ID), "]","에", Chalk.bgRed("실패"), "했습니다.");
+                }
+            }
+            //만약 이메일 아이디가 존재하지 않으면
+            if(result == false){
+                const sendJson = {
+                    "command": "idSearch",
+                    "result": "emailIDError"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("아이디 찾기")), "에", Chalk.bgRed("실패"), "했습니다.");
+            }
         }
 
         //비밀번호 찾기 요청

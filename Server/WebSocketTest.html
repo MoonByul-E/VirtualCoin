@@ -37,8 +37,15 @@ function onOpen(evt) {
         "command": "logout",
         "id": "ver1108"
     };
+    var json_IDSearch = {
+        "command": "idSearch",
+        "name": "asd",
+        "email_ID": "asd",
+        "email_Domain": "asd"
+    };
+
     writeToScreen("CONNECTED");
-    doSend(JSON.stringify(json_Login));
+    doSend(JSON.stringify(json_IDSearch));
 }
 
 function onClose(evt) {
