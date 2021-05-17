@@ -56,13 +56,19 @@ loginServer.on("connection", function(socket, req){
                     }
                     //로그인 성공
                     else{
-                        mysqlDB.query('UPDATE loginData SET nowLogin="true" WHERE ID="'+ id + '"');
-                        const sendJson = {
-                            "command": "login",
-                            "result": "success"
-                        }
-                        socket.send(JSON.stringify(sendJson));
-                        console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                        //로그인 토큰 생성
+                        crypto.randomBytes(64, function(err, buffer){
+                            const loginToken = buffer.toString("base64");
+
+                            mysqlDB.query('UPDATE loginData SET nowLogin="true", loginToken="' + loginToken + '" WHERE ID="'+ id + '"');
+                            const sendJson = {
+                                "command": "login",
+                                "result": "success",
+                                "token": loginToken
+                            }
+                            socket.send(JSON.stringify(sendJson));
+                            console.log(Chalk.magentaBright("[로그인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그인")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+                        });
                     }
                 }
                 //비밀번호가 일치하지 않을시
@@ -95,7 +101,7 @@ loginServer.on("connection", function(socket, req){
 
             //로그인 중일때
             if(nowLogin){
-                mysqlDB.query('UPDATE loginData SET nowLogin="false" WHERE ID="'+ id + '"');
+                mysqlDB.query('UPDATE loginData SET nowLogin="false", loginToken=null WHERE ID="'+ id + '"');
                 const sendJson = {
                     "command": "logout",
                     "result": "success"
@@ -333,4 +339,6 @@ loginServer.on("connection", function(socket, req){
 mainServer.on("connection", function(socket, req){
     //사용자 IP
     const IP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+
+    
 })

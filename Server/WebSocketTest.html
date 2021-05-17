@@ -31,7 +31,7 @@ function onOpen(evt) {
     var json_Login = {
         "command": "login",
         "id": "ver1108",
-        "pw": "psh11080"
+        "pw": "asd1230"
     };
     var json_Logout = {
         "command": "logout",
@@ -57,7 +57,7 @@ function onOpen(evt) {
     }
 
     writeToScreen("CONNECTED");
-    doSend(JSON.stringify(json_PWChange));
+    doSend(JSON.stringify(json_Logout));
 }
 
 function onClose(evt) {
