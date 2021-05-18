@@ -61,7 +61,7 @@ loginServer.on("connection", function(socket, req){
                         crypto.randomBytes(64, function(err, buffer){
                             const loginToken = buffer.toString("base64");
 
-                            mysqlDB.query('UPDATE loginData SET nowLogin="true", loginToken="' + loginToken + '" WHERE ID="'+ id + '"');
+                            mysqlDB.query('UPDATE loginData SET nowLogin="true", loginToken="' + loginToken + '", nowToken="true" WHERE ID="'+ id + '"');
                             const sendJson = {
                                 "command": "login",
                                 "result": "success",
@@ -383,6 +383,93 @@ loginServer.on("connection", function(socket, req){
 mainServer.on("connection", function(socket, req){
     //사용자 IP
     const IP = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    console.log(Chalk.magentaBright("[코　인 서버]"), "새로운 클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("접속")),"했습니다.");
 
-    
+    socket.on("message", function(message){
+        const messageJson = JSON.parse(message);
+        
+        //로그아웃 요청
+        if(messageJson.command == "logout"){
+            const token = messageJson.token;
+
+            //로그인 상태 체크
+            const userData = mysqlDB.query('SELECT ID, nowLogin FROM loginData WHERE loginToken="' + token + '"');
+            const id = userData[0].ID;
+            const nowLogin = userData[0].nowLogin == "true" ? true : false;
+
+            //로그인 중일때
+            if(nowLogin){
+                mysqlDB.query('UPDATE loginData SET nowLogin="false", loginToken=null, nowToken="false" WHERE loginToken="'+ token + '"');
+                const sendJson = {
+                    "command": "logout",
+                    "result": "success"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+            }
+            //로그인중이 아닐때
+            else{
+                const sendJson = {
+                    "command": "logout",
+                    "result": "notLogin"
+                }
+                socket.send(JSON.stringify(sendJson));
+                console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("로그아웃")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgRed("실패"), "했습니다.");
+            }
+        }
+        //생존 확인
+        else if(messageJson.command == "alive"){
+            mysqlDB.query('UPDATE loginData SET nowToken="true" WHERE loginToken="' + messageJson.token + '"');
+        }
+        //토큰으로 아이디 확인
+        else if(messageJson.command == "tokenToID"){
+            const token = messageJson.token;
+            const tokenList = mysqlDB.query('SELECT ID FROM loginData WHERE loginToken="' + token + '"');
+
+            const sendJson = {
+                "command": "tokenToID",
+                "result": "success",
+                "id": tokenList[0].ID
+            }
+            socket.send(JSON.stringify(sendJson));
+            console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("토큰으로 아이디 구하기")), "[ 아이디: ", Chalk.cyanBright(tokenList[0].ID), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+        }
+    })
 })
+
+//5초마다 생존 신호 보내기
+var sendAliveMessage = setInterval(function(){
+    var sendJson = {
+        "command": "alive"
+    }
+    mainServer.broadcast(JSON.stringify(sendJson))
+
+    //데이터베이스에서 nowToken 정보 불러오기
+    const userData = mysqlDB.query('SELECT ID, loginToken, nowToken FROM loginData');
+    for(var i = 0; i < userData.length; i ++){
+        const ID = userData[i].ID;
+        const loginToken = userData[i].loginToken;
+        const nowToken = userData[i].nowToken == "true" ? true : false;
+        if(nowToken == false){
+            //로그인 토큰이 있으면
+            if(loginToken != null){
+                //답이 없으면 토큰 삭제
+                mysqlDB.query('UPDATE loginData SET loginToken=null, nowLogin="false" WHERE ID="' + ID + '"');
+                console.log(Chalk.magentaBright("[코　인 서버]"), Chalk.bgWhite(Chalk.black("응답없음")), "[ 아이디: ", Chalk.cyanBright(ID), "]","으로", Chalk.bgRed("로그아웃"), "되었습니다.");
+            }
+        }
+    }
+    mysqlDB.query('UPDATE loginData SET nowToken="false"');
+}, 5000);
+
+//전체 접속유저에게 메세지 보내기
+mainServer.broadcast = function broadcast(data) {
+    mainServer.clients.forEach(function each(client) {
+        //console.log('IT IS GETTING INSIDE CLIENTS');
+        //console.log(client);
+
+      // The data is coming in correctly
+        //console.log(data);
+        client.send(data);
+    });
+};
