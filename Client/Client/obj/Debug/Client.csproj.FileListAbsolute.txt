@@ -21,3 +21,5 @@ C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.idSearc
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.pwSearchForm.resources
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.registerForm.resources
 C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.mainForm.resources
+C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\bin\Debug\System.Drawing.Common.dll
+C:\Users\parks\Desktop\개인\VirtualCoin\Client\Client\obj\Debug\Client.coinGraphForm.resources

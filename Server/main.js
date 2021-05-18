@@ -181,6 +181,7 @@ loginServer.on("connection", function(socket, req){
 
                             //데이터베이스에 업로드
                             mysqlDB.query('INSERT INTO loginData(ID, PW_Key, PW_Salt, Name, EMail_ID, EMail_Domain, nowLogin, changePW) VALUE ("' + id + '", "' + pw_Key + '", "' + pw_Salt + '", "' + name + '", "' + email_ID + '", "' + email_Domain + '", "false", "false")');
+                            mysqlDB.query('INSERT INTO userData(ID, CoinData) VALUE ("' + id + '", "[0,0,0,0]")');
 
                             const sendJson = {
                                 "command": "register",
@@ -434,6 +435,42 @@ mainServer.on("connection", function(socket, req){
             socket.send(JSON.stringify(sendJson));
             console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("토큰으로 아이디 구하기")), "[ 아이디: ", Chalk.cyanBright(tokenList[0].ID), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
         }
+        //내 정보 구하기
+        else if(messageJson.command == "myData"){
+            const token = messageJson.token;
+            const id = mysqlDB.query('SELECT ID FROM loginData WHERE loginToken="' + token + '"')[0].ID;
+            const userData = mysqlDB.query('SELECT CoinData FROM userData WHERE ID="' + id + '"');
+
+            const sendJson = {
+                "command": "myData",
+                "result": "success",
+                "coinData": userData[0].CoinData
+            }
+            socket.send(JSON.stringify(sendJson));
+            console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("내정보")), "[ 아이디: ", Chalk.cyanBright(id), "]","에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+        }
+        //코인 리스트 구하기
+        else if(messageJson.command == "coinData"){
+            const coinList = mysqlDB.query('SELECT * FROM coinData');
+            var arrayName = new Array();
+            var arrayNowPrice = new Array();
+            var arrayOldPrice = new Array();
+
+            for(var i = 0; i < coinList.length; i ++){
+                arrayName.push(coinList[i].Name);
+                arrayNowPrice.push(coinList[i].nowPrice);
+                arrayOldPrice.push(JSON.parse(coinList[i].arrayPrice).price);
+            }
+
+            const sendJson = {
+                "command": "coinData",
+                "name": arrayName,
+                "price": arrayNowPrice,
+                "oldPrice": arrayOldPrice
+            }
+            socket.send(JSON.stringify(sendJson));
+            console.log(Chalk.magentaBright("[코　인 서버]"), "클라이언트 [", Chalk.cyanBright(IP), "] 가 ", Chalk.bgWhite(Chalk.black("코인 리스트 구하기")),"에", Chalk.bgGreen(Chalk.black("성공")), "했습니다.");
+        }
     })
 })
 
@@ -465,11 +502,6 @@ var sendAliveMessage = setInterval(function(){
 //전체 접속유저에게 메세지 보내기
 mainServer.broadcast = function broadcast(data) {
     mainServer.clients.forEach(function each(client) {
-        //console.log('IT IS GETTING INSIDE CLIENTS');
-        //console.log(client);
-
-      // The data is coming in correctly
-        //console.log(data);
         client.send(data);
     });
 };
